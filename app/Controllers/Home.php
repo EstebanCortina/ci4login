@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use App\Models\UserModel;
+
 class Home extends BaseController
 {
   public function index()
@@ -19,7 +21,14 @@ class Home extends BaseController
       "username" => $username,
       "password" => $password
     ];
-
-    return redirect()->to('forum')->with("data", $data);
+    $userModel = new UserModel();
+    $userModel->validateUser($data);
+    //return redirect()->to('forum')->with("data", $data);
+  }
+  public function signup()
+  {
+    $username = $this->request->getPost('username');
+    $password = $this->request->getPost('password');
+    $email = $this->request->getPost('email');
   }
 }
