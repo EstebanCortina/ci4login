@@ -22,7 +22,10 @@ class Home extends BaseController
       "password" => $password
     ];
     $userModel = new UserModel();
-    $userModel->validateUser($data);
+
+    if ($userModel->validateUser($data)) {
+      return redirect()->to('forum')->with("data", $data);
+    }
     //return redirect()->to('forum')->with("data", $data);
   }
   public function signup()
@@ -30,5 +33,14 @@ class Home extends BaseController
     $username = $this->request->getPost('username');
     $password = $this->request->getPost('password');
     $email = $this->request->getPost('email');
+    $data = [
+      "username" => $username,
+      "email" => $email,
+      "password" => $password
+    ];
+    $userModel = new UserModel();
+    if ($userModel->createUser($data)) {
+      return redirect()->to('forum')->with("data", $data);
+    }
   }
 }

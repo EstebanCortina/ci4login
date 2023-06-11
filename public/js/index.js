@@ -6,15 +6,16 @@ $(() => {
 
     setTimeout(() => {
       const formContainer = document.getElementsByClassName('form-container')[0];
-      $("form").fadeOut(400);
       formContainer.classList.add('expand');
+      $("form").fadeOut(400);
+
 
     }, 100);
 
 
     setTimeout(() => {
       event.target.submit();
-    }, 1300);
+    }, 1700);
   });
 
   $("#btnsignup").on("click", () => {
