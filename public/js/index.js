@@ -7,11 +7,12 @@ $(() => {
       const formContainer = document.getElementsByClassName('form-container')[0];
       formContainer.classList.add('expand');
       $(".form-control").fadeOut(400);
+      $(".form-control").hide();
     }, 100);
 
 
     setTimeout(() => {
-      event.target.submit();
+      //event.target.submit();
     }, 1300);
   });
 
