@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Open+Sans:wght@400;500&family=Roboto&family=Roboto+Slab:wght@300;400&display=swap');
+
+body {
+  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Open Sans', sans-serif;
+  font-family: 'Roboto', sans-serif;
+  font-family: 'Roboto Slab', serif;
+}
+
+.first {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logoTitle {
+  width: auto;
+}
+
+.form-container {
+  font-size: x-large;
+  color: rgb(209, 74, 25);
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  background-image: url('../img/bg2.svg');
+  border-radius: 30px;
+  background-size: cover;
+  background-position: center;
+  transition: all 0.3s ease-in-out;
+}
+
+.form-container.expand {
+  height: 95vh;
+  width: 95vh;
+}
+
+input {
+  width: 95%;
+}
+
+button {
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.form-control {
+  margin: auto;
+  margin-bottom: 10px;
+  width: 50%;
+}
