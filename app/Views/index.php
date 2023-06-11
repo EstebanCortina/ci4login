@@ -10,4 +10,5 @@ Login
 <?= $this->endSection() ?>
 <?= $this->section('scripts') ?>
 <script src="js/index.js"></script>
+<script src="js/bootstrap.min.js"></script>
 <?= $this->endSection() ?>

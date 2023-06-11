@@ -11,11 +11,11 @@
       <label for="password">Contraseña:</label>
       <input type="password" name="password" required>
     </div>
-    <div class="form-control">
-      <button id="login-btn" type="submit">Login</button>
+    <div class="form-control form-control-lg">
+      <button class="btn btn-danger" id="login-btn" type="submit">Login</button>
     </div>
-    <div class="form-control">
-      <button id="btnsignup" type="button">Signup</button>
+    <div class="form-control form-control-lg">
+      <button class="btn btn-primary" id="btnsignup" type="button">Signup</button>
     </div>
   </form>
 </div>

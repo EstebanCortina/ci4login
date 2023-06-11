@@ -20,7 +20,7 @@
       <input type="password" name="rptpassword" required>
     </div>
     <div class="form-control">
-      <button id="signup-btn" type="submit">Signup</button>
+      <button class="btn btn-primary orange" id="signup-btn" type="submit">Signup</button>
     </div>
   </form>
 </div>
