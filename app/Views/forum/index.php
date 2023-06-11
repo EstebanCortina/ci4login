@@ -3,5 +3,10 @@
 Forum
 <?= $this->endSection() ?>
 <?= $this->section('body') ?>
-Forum
+<?php
+if (session()->has('data')) {
+  echo session('data')['res'];
+}
+?>
+
 <?= $this->endSection() ?>

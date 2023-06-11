@@ -12,51 +12,87 @@ class UserModel extends Model
   protected $primaryKey = 'userId';
   protected $allowedFields = ['username', 'password', 'email'];
 
-  public function createUser($data)
+  public function login(array $data): array
   {
-    /*
-    $this->validateUser($data["username"]);
-    $this->checkUser($data["username"], $data["email"]);
+    $response = $this->validateUser($data['username'], $data['password']);
+    return $response;
+  }
 
-    $this->insert($data);
+  public function signup(array $data): array
+  {
+    $response = $this->validateUser($data['username'], $data['password']);
+    if ($response['type'] == 2) {
+      if ($this->createUser($data)) {
+        $response = [
+          "type" => 2,
+          "res" => $data['username']
+        ];
+        return $response;
+      } else {
+        $response = [
+          "type" => 1,
+          "res" => "Error al insertar usuario"
+        ];
+        return $response;
+      }
+    } else {
+      return $response;
+    }
+  }
 
-    IDEA: Usar solo un validador, el que revisa si la contraseña es correcta, que devuelva true y dependiendo del contexto, validamos si queremos que sea true o false el resultado esperado.
-*/
-    $newUser = new User($data["username"], $data["password"], $data["email"]);
+
+
+  private function createUser(array $data)
+  {
+    $newUser = new User($data['username'], $data['password'], $data['email']);
+
     if ($this->insertUser($newUser)) {
-      return redirect()->to('forum')->with("data", $data);
+      return redirect()->to('forum')->with("data", $data['username']);
     } else {
       return "error";
     }
   }
-
-  private function checkUser(User $user): void
-  {
-  }
-
   private function insertUser(User $user): bool
   {
-    $username = $user->name;
-    $email = $user->email;
-    $password = $user->password;
-    $query = "INSERT INTO users (userName, email, password) VALUES ('$username','$email','$password')";
-    $this->query($query);
-    $res = $this->insertID();
-
-    if ($res) {
+    $query = "INSERT INTO users (userName, email, password) VALUES ('$user->name','$user->email','$user->password')";
+    if ($this->query($query)) {
       return true;
     } else {
       return false;
     }
   }
 
-  public function validateUser($data): bool
+  private function validateUser(string $username, string $password): array
   {
-    $query = $this->db->query('SELECT * FROM users WHERE "email="' . $data["email"]);
-    if ($query) {
-      return true;
+
+    $query_username = "SELECT username from users WHERE username='$username'";
+    $resUsername = $this->query($query_username)->getResult();
+
+
+    if ($resUsername) {
+      $query = "SELECT username from users WHERE username='$username' AND password='$password'";
+      $result = $this->query($query)->getResult();
+
+
+      if ($result) {
+        $response = [
+          "type" => 1,
+          "res" => $result[0]->username
+        ];
+        return $response;
+      } else {
+        $response = [
+          "type" => 2,
+          "res" => "Contraseña incorrecta"
+        ];
+        return $response;
+      }
     } else {
-      return false;
+      $response = [
+        "type" => 2,
+        "res" => "No se encontro una cuenta con este nombre de usuario"
+      ];
+      return $response;
     }
   }
 }
