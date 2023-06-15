@@ -2,9 +2,15 @@
 
 namespace App\Models;
 
+
 use CodeIgniter\Model;
 use App\Models\User;
+use App\Exceptions\login\IncorrectPasswordException;
+use App\Exceptions\login\UserNotFoundException;
+use App\Exceptions\signup\UserAlreadyExistsException;
 
+
+use Exception;
 
 class UserModel extends Model
 {
@@ -12,87 +18,87 @@ class UserModel extends Model
   protected $primaryKey = 'userId';
   protected $allowedFields = ['username', 'password', 'email'];
 
-  public function login(array $data): array
+  public function login(array $data): string | Exception
   {
-    $response = $this->validateUser($data['username'], $data['password']);
-    return $response;
+
+    try {
+      $response = $this->validateUser($data['username'], $data['password']);
+      return $response;
+    } catch (Exception $newException) {
+      throw $newException;
+    }
   }
 
-  public function signup(array $data): array
+  public function signup(array $data)
   {
-    $response = $this->validateUser($data['username'], $data['password']);
-    if ($response['type'] == 2) {
-      if ($this->createUser($data)) {
-        $response = [
-          "type" => 2,
-          "res" => $data['username']
-        ];
-        return $response;
-      } else {
-        $response = [
-          "type" => 1,
-          "res" => "Error al insertar usuario"
-        ];
-        return $response;
-      }
-    } else {
+
+    /*
+    En esta parte se validaria el nuevo nombre de usuario
+    if ($data['data']) {
+    }
+    */
+
+    try {
+      $response = $this->createUser($data);
       return $response;
+    } catch (Exception $newException) {
+      throw $newException;
     }
   }
 
 
 
-  private function createUser(array $data)
+  private function createUser(array $data): User | Exception
   {
     $newUser = new User($data['username'], $data['password'], $data['email']);
 
-    if ($this->insertUser($newUser)) {
-      return redirect()->to('forum')->with("data", $data['username']);
-    } else {
-      return "error";
-    }
-  }
-  private function insertUser(User $user): bool
-  {
-    $query = "INSERT INTO users (userName, email, password) VALUES ('$user->name','$user->email','$user->password')";
-    if ($this->query($query)) {
-      return true;
-    } else {
-      return false;
+    try {
+      $this->validateUser($data['username'], $data['password']);
+      throw new UserAlreadyExistsException();
+    } catch (Exception $UserException) {
+      if ($UserException instanceof UserNotFoundException) {
+        try {
+          $this->insertUser($newUser);
+          return $newUser;
+        } catch (Exception $newException) {
+          throw $newException;
+        }
+      } else {
+        throw $UserException;
+      }
     }
   }
 
-  private function validateUser(string $username, string $password): array
+
+  private function validateUser(string $username, string $password): string | Exception
   {
 
     $query_username = "SELECT username from users WHERE username='$username'";
     $resUsername = $this->query($query_username)->getResult();
 
-
     if ($resUsername) {
       $query = "SELECT username from users WHERE username='$username' AND password='$password'";
       $result = $this->query($query)->getResult();
-
-
       if ($result) {
-        $response = [
-          "type" => 1,
-          "res" => $result[0]->username
-        ];
-        return $response;
+        return $result[0]->username;
       } else {
-        $response = [
-          "type" => 2,
-          "res" => "Contraseña incorrecta"
-        ];
-        return $response;
+        throw new IncorrectPasswordException();
       }
     } else {
-      $response = [
-        "type" => 2,
-        "res" => "No se encontro una cuenta con este nombre de usuario"
-      ];
-      return $response;
+      throw new UserNotFoundException($username);
+    }
+  }
+
+
+
+  private function insertUser(User $newUser): bool
+  {
+    try {
+      $query = "INSERT INTO users (userName, email, password) VALUES ('$newUser->name','$newUser->email','$newUser->password')";
+      $this->query($query);
+      return true;
+    } catch (Exception $th) {
+      throw $th;
     }
   }
 }

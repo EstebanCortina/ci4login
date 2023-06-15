@@ -3,6 +3,11 @@
     <img class="logoTitle" src="img/ci4logo.svg" alt="CodeIgniter">
   </div>
   <form action="<?= base_url() ?>" method="POST">
+    <?php
+    if (session()->has('data')) {
+      echo session('data');
+    }
+    ?>
     <div class="form-control">
       <label for="username">Nombre:</label>
       <input type="text" name="username" required>

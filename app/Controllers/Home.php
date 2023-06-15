@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
+use Exception;
 
 class Home extends BaseController
 {
@@ -23,12 +24,13 @@ class Home extends BaseController
     ];
 
     $userModel = new UserModel();
-    $response = $userModel->login($data);
 
-    if ($response['type'] == 1) {
+
+    try {
+      $response = $userModel->login($data);
       return redirect()->to('forum')->with("data", $response);
-    } else {
-      return $response['res'];
+    } catch (Exception $newException) {
+      return redirect()->to('/')->with("data", $newException->getMessage());
     }
   }
   public function signup()
@@ -44,12 +46,12 @@ class Home extends BaseController
     ];
 
     $userModel = new UserModel();
-    $response = $userModel->signup($data);
 
-    if ($response['type'] == 2) {
-      return redirect()->to('forum')->with("data", $response);
-    } else {
-      return "El correo o el nombre de usuario ya estan siendo utilizados";
+    try {
+      $response = $userModel->signup($data);
+      return redirect()->to('forum')->with("data", $response->name);
+    } catch (Exception $newException) {
+      return redirect()->to('/')->with("data", $newException->getMessage());
     }
   }
 }

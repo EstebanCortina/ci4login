@@ -5,7 +5,7 @@ Forum
 <?= $this->section('body') ?>
 <?php
 if (session()->has('data')) {
-  echo session('data')['res'];
+  echo session('data');
 }
 ?>
 
